@@ -14,9 +14,7 @@ const favoriteMealRoutes = require('./routes/favoriteMeals');
 
 const app = express();
 
-app.use(cors({
-  origin: 'https://makeneat.netlify.app'
-}));
+app.use(cors());
 app.use(express.json());
 app.use(authenticateJWTToken);
 
