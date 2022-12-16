@@ -1,17 +1,20 @@
+"use strict";
+
 const express = require('express');
-const ExpressError = require('./expressError');
 const cors = require('cors');
 
-const app = express();
-
-app.use(express.json());
-app.use(cors());
-
+const ExpressError = require('./expressError');
 const userRoutes = require('./routes/users');
 const mealRoutes = require('./routes/meals');
 const ingredientRoutes = require('./routes/ingredients');
 const reviewRoutes = require('./routes/reviews');
 const favoriteMealRoutes = require('./routes/favoriteMeals');
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
 
 app.use("/users", userRoutes);
 app.use("/meals", mealRoutes);
