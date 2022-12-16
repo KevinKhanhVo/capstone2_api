@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const ExpressError = require('../expressError');
-const { loginRequired, authUser } = require('../middleware/auth');
+const { loginRequired } = require('../middleware/auth');
 
 /**
  * GET /reviews/:meal_id => { reviews }
@@ -36,7 +36,7 @@ const { loginRequired, authUser } = require('../middleware/auth');
  * Return message object.
  */
 
- router.post('/:meal_id', authUser, loginRequired, async (req, res, next) => {
+ router.post('/:meal_id', loginRequired, async (req, res, next) => {
     try{
         const { comment, rating } = req.body;
 
@@ -77,7 +77,7 @@ const { loginRequired, authUser } = require('../middleware/auth');
  * Return message object.
  */
 
-router.delete('/:meal_id', authUser, loginRequired, async (req, res, next) => {
+router.delete('/:meal_id', loginRequired, async (req, res, next) => {
     try{
         const meal_id = req.params.meal_id;
 

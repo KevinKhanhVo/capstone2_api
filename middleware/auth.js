@@ -1,6 +1,25 @@
 const jwt = require('jsonwebtoken');
 const { SECRET_KEY } = require('../config');
 
+/**
+ * Middleware for user authentication.
+ * Check for token in the header. 
+ * If there is no token, then it will out an error to login.
+ * Otherwise, it will set the username and user id from the token.
+ * To allow for access to authenticated routes.
+ */
+function authenticateJWTToken(req, res, next) {
+  try {
+    const token = req.headers && req.headers.authorization;
+      if (token) {
+      res.locals.user = jwt.verify(token, SECRET_KEY);
+    }
+    
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
 
 /**
  * Middleware to authenticate user login. 
@@ -21,30 +40,8 @@ function loginRequired(req, res, next){
     }
 }
 
-/**
- * Middleware for user authentication.
- * Check for token in the header. 
- * If there is no token, then it will out an error to login.
- * Otherwise, it will set the username and user id from the token.
- * To allow for access to authenticated routes.
- */
-function authUser(req, res, next) {
-    try {
-      const token = req.headers.authorization;
-        if (token) {
-  
-        let payload = jwt.verify(token, SECRET_KEY);
-        req.current_username = payload.username;
-        req.current_user_id = payload.user_id;
-      }
-      
-      return next();
-    } catch (err) {
-      return next(err);
-    }
-  }
 
 module.exports = {
-    loginRequired,
-    authUser
+    authenticateJWTToken,
+    loginRequired
 }

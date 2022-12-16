@@ -4,6 +4,8 @@ const express = require('express');
 const cors = require('cors');
 
 const ExpressError = require('./expressError');
+
+const { authenticateJWTToken } = require("./middleware/auth");
 const userRoutes = require('./routes/users');
 const mealRoutes = require('./routes/meals');
 const ingredientRoutes = require('./routes/ingredients');
@@ -14,6 +16,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(authenticateJWTToken);
 
 
 app.use("/users", userRoutes);

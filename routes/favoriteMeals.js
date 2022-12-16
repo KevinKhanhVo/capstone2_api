@@ -1,8 +1,10 @@
+"use strict";
+
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const ExpressError = require('../expressError');
-const { loginRequired, authUser } = require('../middleware/auth');
+const { loginRequired } = require('../middleware/auth');
 
 /**
  * GET /favorite/ => { favoriteMeals object }
@@ -11,7 +13,7 @@ const { loginRequired, authUser } = require('../middleware/auth');
  * 
  * Return an object of all favorite meals.
  */
- router.get('/', authUser, loginRequired, async (req, res, next) => {
+ router.get('/', loginRequired, async (req, res, next) => {
     try{
         const results = await db.query(
             `SELECT meal_id
@@ -20,7 +22,7 @@ const { loginRequired, authUser } = require('../middleware/auth');
             ORDER BY meal_id`, [req.current_user_id]
         );
 
-        return res.json(results.rows);
+        return res.status(201).json(results.rows);
     } catch(err){
         return next(new ExpressError("Cannot retrieve favorite meals"), 401);
     }
@@ -34,7 +36,7 @@ const { loginRequired, authUser } = require('../middleware/auth');
  * Return message message.
  */
 
- router.post('/:meal_id', authUser, loginRequired, async (req, res, next) => {
+ router.post('/:meal_id', loginRequired, async (req, res, next) => {
     try{
         const meal_id = req.params.meal_id;
         
@@ -69,7 +71,7 @@ const { loginRequired, authUser } = require('../middleware/auth');
  * Return message message.
  */
 
- router.delete('/:meal_id', authUser, loginRequired, async (req, res, next) => {
+ router.delete('/:meal_id', loginRequired, async (req, res, next) => {
     try{
         const meal_id = req.params.meal_id;
 

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const ExpressError = require('../expressError');
-const { loginRequired, authUser } = require('../middleware/auth');
+const { loginRequired } = require('../middleware/auth');
 
 const bcrypt = require('bcrypt')
 const { BCRYPT_WORK_FACTOR, SECRET_KEY } = require('../config')
@@ -27,9 +27,10 @@ router.post('/register', async (req, res, next) => {
                 `INSERT INTO users (username, password, firstName, lastName)
                 VALUES ($1, $2, $3, $4)`, 
                 [username, hashedPassword, firstName, lastName]);
-            
-            
-            return res.json({ message: "User registration successful!"});
+
+
+            let token = jwt.sign({ username }, SECRET_KEY);
+            return token;
         }
     }catch(err){
         if(err.code === '23505'){
@@ -54,14 +55,9 @@ router.post('/login', async (req, res, next) => {
         
         let user = result.rows[0];
         if(user && await bcrypt.compare(password, user.password) === true){
-            let user_id = result.rows[0].id
-            let token = jwt.sign({ username, user_id }, SECRET_KEY);
+            let token = jwt.sign({ username }, SECRET_KEY);
 
-            return res.json({ token, 
-                id: user.id,
-                username: user.username,
-                name: user.name
-            });
+            return token;
         }
 
         else{
@@ -79,7 +75,7 @@ router.post('/login', async (req, res, next) => {
  * 
  * Returns object of all users.
  */
-router.get('/', authUser, loginRequired, async (req, res, next) => {
+router.get('/', loginRequired, async (req, res, next) => {
     try{
         const results = await db.query(
             `SELECT id, username, name FROM users`
