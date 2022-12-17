@@ -37,7 +37,7 @@ router.post('/register', async (req, res, next) => {
         return res.status(201).json({ token });
     }catch(err){
         if(err.code === '23505'){
-            return next(new ExpressError("Username is taken. Please choose another username.", 400));
+            return next(new ExpressError(["Username is taken. Please choose another."], 401));
         }
     }
 })
