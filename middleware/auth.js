@@ -29,7 +29,7 @@ function authenticateJWTToken(req, res, next) {
  */
 function loginRequired(req, res, next){
     try{
-        if(req.current_username){
+        if(!res.locals.user){
           return next();
         } 
         else{
