@@ -87,7 +87,7 @@ router.post('/login', async (req, res, next) => {
 router.get('/', loginRequired, async (req, res, next) => {
     try{
         const results = await db.query(
-            `SELECT id, username, name FROM users`
+            `SELECT id, username, firstName, lastName FROM users`
         );
 
         return res.json(results.rows);

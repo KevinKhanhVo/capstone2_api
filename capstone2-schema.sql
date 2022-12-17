@@ -10,12 +10,20 @@ CREATE TABLE review (
     id SERIAL PRIMARY KEY,
     comment TEXT   NOT NULL,
     rating INTEGER   NOT NULL,
-    user_id INTEGER   NOT NULL REFERENCES users ON DELETE CASCADE,
-    meal_id INTEGER   NOT NULL
+    meal_id INTEGER   NOT NULL,
+    username TEXT   NOT NULL,
+    CONSTRAINT fk_user_review
+        FOREIGN KEY(username)
+            REFERENCES users(username)
+
 );
 
 CREATE TABLE favoritemeal (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER   NOT NULL REFERENCES users ON DELETE CASCADE,
-    meal_id INTEGER   NOT NULL
+    meal_id INTEGER   NOT NULL,
+    username TEXT NOT NULL,
+    CONSTRAINT fk_user_favoritemeal
+        FOREIGN KEY(username)
+            REFERENCES users(username)
 );
+

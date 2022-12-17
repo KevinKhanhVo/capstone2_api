@@ -1,3 +1,5 @@
+"user strict";
+
 const jwt = require('jsonwebtoken');
 const { SECRET_KEY } = require('../config');
 
@@ -12,12 +14,12 @@ function authenticateJWTToken(req, res, next) {
   try {
     const token = req.headers && req.headers.authorization;
       if (token) {
-      res.locals.user = jwt.verify(token, SECRET_KEY);
+        res.locals.user = jwt.verify(token, SECRET_KEY);
     }
     
     return next();
   } catch (err) {
-    return next(err);
+    return next();
   }
 }
 
@@ -29,7 +31,7 @@ function authenticateJWTToken(req, res, next) {
  */
 function loginRequired(req, res, next){
     try{
-        if(!res.locals.user){
+        if(res.locals.user){
           return next();
         } 
         else{
