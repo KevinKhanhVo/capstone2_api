@@ -11,7 +11,7 @@ const { loginRequired } = require('../middleware/auth');
  * Retrieve all meals that are favorited by user.
  * Only users who are authenticated and logged in can view all their favorites.
  * 
- * Return an object of all favorite meals.
+ * Return an object of all favorite meals
  */
  router.get('/:username', loginRequired, async (req, res, next) => {
     try{

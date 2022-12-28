@@ -21,14 +21,27 @@ router.post('/register', async (req, res, next) => {
     try{
         const validator = jsonschema.validate(req.body, userRegisterSchema);
         if(!validator.valid){
-            const errs = validator.errors.map(e => e.stack);
-            return next(new ExpressError(errs, 401));
+            const errs = validator.errors.map(e => {
+                if(e.name === 'required'){
+                    if(e.argument === 'username') return "Username is required."
+                    else if(e.argument === 'password') return "Password is required."  
+                    else if(e.argument === 'firstName') return "First Name is required."
+                    else if(e.argument === 'lastName') return "Last Name is required."
+                }
+                else if (e.name === 'minLength'){
+                    if(e.property === 'instance.username') return "Username is required."
+                    else if(e.property === 'instance.password') return "Password " + e.message  
+                    else if(e.property === 'instance.firstName') return "First Name is required."
+                    else if(e.property === 'instance.lastName') return "Last Name is required."
+                }
+            });
+            return next(new ExpressError(errs, 400));
         }
 
         const { username, password, firstName, lastName } = req.body;
         const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR)
     
-        const newUser = await db.query(
+        await db.query(
             `INSERT INTO users (username, password, firstName, lastName)
             VALUES ($1, $2, $3, $4)`, 
             [username, hashedPassword, firstName, lastName]);
@@ -37,7 +50,7 @@ router.post('/register', async (req, res, next) => {
         return res.status(201).json({ token });
     }catch(err){
         if(err.code === '23505'){
-            return next(new ExpressError(["Username is taken. Please choose another."], 401));
+            return next(new ExpressError(["Username is taken. Please choose another."], 400));
         }
     }
 })
@@ -53,7 +66,7 @@ router.post('/login', async (req, res, next) => {
         const validator = jsonschema.validate(req.body, userLoginSchema);
         if(!validator.valid){
             const errs = validator.errors.map(e => e.stack);
-            return next(new ExpressError(errs, 401));
+            return next(new ExpressError(errs, 400));
         }
 
         const { username, password } = req.body
@@ -71,7 +84,7 @@ router.post('/login', async (req, res, next) => {
             return res.status(201).json({ token });
         }
 
-        return next(new ExpressError(["Invalid username / password"], 401));
+        return next(new ExpressError(["Invalid username / password"], 400));
 
     }catch(err){
         return next(err);

@@ -12,13 +12,13 @@ describe("GET /meals/", function(){
     })
 
     test("retrieve a meal by id", async function(){
-        const resp = await request(app).get('/meals/id/53032')
+        const resp = await request(app).get('/meals/53032')
 
         expect(resp.statusCode).toEqual(200);
     })
 
     test("retrieve a meal by name", async function(){
-        const resp = await request(app).get('/meals/name/sushi')
+        const resp = await request(app).get('/meals/sushi')
 
         expect(resp.statusCode).toEqual(200);
     })

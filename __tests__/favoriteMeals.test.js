@@ -5,51 +5,50 @@ const app = require("../app.js")
 
 let token;
 
-beforeAll(() =>{
-    request(app)
-        .post("/users/login")
+beforeEach(async () =>{
+    const resp = await request(app)
+        .post("/users/register")
         .send({
-            "username": "u1",
-            "password": "p1"
+            username: "favoriteUser1",
+            password: "password",
+            firstName: "f1",
+            lastName: "l1"
         })
-        .end((err, response) => {
-            token = response.body.token;
-        });
+    token = resp.body.token;
 })
 
-describe("GET /favorites/", function(){
+describe("GET /favorites/:username", function(){
     test("should not be able to retrieve favorite if unauthenticated.", async function(){
         const resp = await request(app)
-        .get("/favorites")
+        .get("/favorites/u1")
 
         expect(resp.statusCode).toEqual(401);
-        expect(resp.body.message).toEqual('Login required.');
     })
 
     test("retrieve favorite after authenticated.", async function(){
         const resp = await request(app)
-        .get("/favorites")
-        .set("Authorization", `${token}`)
+        .get("/favorites/u1")
+        .set("Authorization", token)
 
-        expect(resp.statusCode).toEqual(200);
+        expect(resp.statusCode).toEqual(201);
     })
 })
 
-describe("POST /favorites/:meal_id", function(){
+describe("POST /favorites/:username/:meal_id", function(){
     test("favorite a meal favorite after authenticated.", async function(){
         const resp = await request(app)
-        .post("/favorites/53065")
-        .set("Authorization", `${token}`)
+        .post("/favorites/u1/53065")
+        .set("Authorization", token)
 
         expect(resp.statusCode).toEqual(200);
         expect(resp.body.message).toEqual('Meal favorited!');
     })
 })
 
-describe("DELETE /favorites/:meal_id", function(){
+describe("DELETE /favorites/:username/:meal_id", function(){
     test("unfavorite a favorited meal.", async function(){
         const resp = await request(app)
-        .delete("/favorites/53065")
+        .delete("/favorites/u1/53065")
         .set("Authorization", `${token}`)
 
         expect(resp.statusCode).toEqual(200);
@@ -62,5 +61,6 @@ afterEach(async function (){
 })
 
 afterAll(async function(){
+    await db.query("DELETE FROM users WHERE username = 'favoriteUser1'");
     await db.end();
 })

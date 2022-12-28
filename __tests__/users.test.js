@@ -20,14 +20,14 @@ beforeEach(async function() {
     }
   
     let sampleUsers = [
-      [1, "u1", await _pwd("p1"), "n1"],
-      [2, "u2", await _pwd("p2"), "n2"],
-      [3, "u3", await _pwd("p3"), "n3"]
+      [1, "u1", await _pwd("p1"), "f1", "l1"],
+      [2, "u2", await _pwd("p2"), "f2", "l2"],
+      [3, "u3", await _pwd("p3"), "f3", "l3"]
     ];
   
     for (let user of sampleUsers) {
       await db.query(
-        `INSERT INTO users VALUES ($1, $2, $3, $4)`,
+        `INSERT INTO users VALUES ($1, $2, $3, $4, $5)`,
         user
       );
 
@@ -42,10 +42,10 @@ describe("POST /users/register", function(){
         .send({
             username: "new_user",
             password: "new_password",
-            name: "new_name",
+            firstName: "new_firstName",
+            lastName: "new_lastName"
         });
-        expect(resp.statusCode).toEqual(200);
-        expect(resp.body.message).toEqual('User registration successful!');
+        expect(resp.statusCode).toEqual(201);
     })
 
     test("invalid username", async function(){
@@ -56,7 +56,6 @@ describe("POST /users/register", function(){
                 "name": "test_name",
             })
         expect(resp.statusCode).toEqual(400);
-        expect(resp.body.error).toEqual({ message: 'Username or Password is required.', status: 400});
     })
 
     test("invalid password", async function(){
@@ -67,7 +66,6 @@ describe("POST /users/register", function(){
                 "name": "test_name",
             })
         expect(resp.statusCode).toEqual(400);
-        expect(resp.body.error).toEqual({ message: 'Username or Password is required.', status: 400});
     })
 
     test("should not allow username duplication", async function(){
@@ -76,10 +74,11 @@ describe("POST /users/register", function(){
         .send({
             username: "u1",
             password: "new_password",
-            name: "my_name",
+            firstName: "new_firstName",
+            lastName: "new_lastName"
         });
       expect(resp.statusCode).toBe(400);
-      expect(resp.body.error).toEqual({ message: "Username is taken. Please choose another username.", status: 400});
+      expect(resp.body.error).toEqual({ message: ["Username is taken. Please choose another."], status: 400});
 
     })
 })
@@ -92,7 +91,7 @@ describe("POST /users/login", () => {
                 "username": "u1",
                 "password": "p1"
             })
-        expect(resp.statusCode).toEqual(200);
+        expect(resp.statusCode).toEqual(201);
 
         let { username } = jwt.verify(resp.body.token, SECRET_KEY);
         expect(username).toBe("u1");
@@ -106,7 +105,7 @@ describe("POST /users/login", () => {
                 "password": "wrong_password"
             })
         expect(resp.statusCode).toEqual(400);
-        expect(resp.body.error).toEqual({ message: 'Invalid username / password', status: 400});
+        expect(resp.body.error).toEqual({ message: ['Invalid username / password'], status: 400});
     })
 })
 

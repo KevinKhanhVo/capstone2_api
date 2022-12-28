@@ -39,7 +39,7 @@ const ExpressError = require('../expressError');
 })
 
 /**
- * GET /meals/id/:id => { meal }
+ * GET /meals/:id => { meal }
  * Retrieve a meal by id.
  * 
  * Return an object of the meal.

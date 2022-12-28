@@ -13,50 +13,19 @@
     "properties": {
         "username": {
             "type": "string",
-            "default": "",
-            "title": "The username Schema",
-            "minLength": 1,
-            "maxLength": 30,
-            "examples": [
-                "u1"
-            ]
+            "minLength": 1
         },
         "password": {
             "type": "string",
-            "default": "",
-            "title": "The password Schema",
-            "minLength": 5,
-            "maxLength": 20,
-            "examples": [
-                "p1"
-            ]
+            "minLength": 5
         },
         "firstName": {
             "type": "string",
-            "default": "",
-            "title": "The firstName Schema",
-            "minLength": 1,
-            "maxLength": 30,
-            "examples": [
-                "example_firstName"
-            ]
+            "minLength": 1
         },
         "lastName": {
             "type": "string",
-            "default": "",
-            "title": "The lastName Schema",
-            "minLength": 1,
-            "maxLength": 30,
-            "examples": [
-                "example_lastName"
-            ]
+            "minLength": 1
         }
-    },
-    "additionalProperties": false,
-    "examples": [{
-        "username": "u1",
-        "password": "p1",
-        "firstName": "example_firstName",
-        "lastName": "example_lastName"
-    }]
+    }
 }
